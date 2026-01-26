@@ -46,6 +46,96 @@ export class ExecutionSimulator {
       realizedPnL: 0,
       trades: [],
     };
+    
+    // Initialize with 3 profitable historical trades
+    this.initializeHistoricalTrades();
+  }
+
+  /**
+   * Initialize with 3 completed profitable trades
+   * Total profit: ~$20-50
+   * Uses larger position size for historical trades to show meaningful profits
+   * Timestamps are aligned to minute boundaries to match candle timestamps
+   * Trades are spread across recent minutes (5, 3, 1 minutes ago) so they're visible on chart
+   */
+  private initializeHistoricalTrades(): void {
+    const now = Date.now();
+    const oneMinute = 60000;
+    const basePrice = 5094; // Current gold price
+    const historicalQty = 0.15; // Larger size for historical trades (0.15 oz = ~$764 position)
+    
+    // Align timestamps to minute boundaries (same as candles)
+    // Place trades at different minutes so they appear spread out on the chart
+    const currentMinute = Math.floor(now / oneMinute) * oneMinute;
+    
+    // Create 3 profitable trades with varying profits ($7-17 each, total ~$35)
+    // Price differences: ~$55-65 per oz to achieve $8-9 profit per trade with 0.15 oz position
+    // Timestamps aligned to minute boundaries and spread across recent minutes
+    // Each trade pair is separated by at least 1 minute for clear visualization
+    const historicalTrades: Array<{ buyPrice: number; sellPrice: number; buyTime: number; sellTime: number }> = [
+      {
+        buyPrice: basePrice - 58, // Bought at $5036
+        sellPrice: basePrice - 5,  // Sold at $5089 (profit ~$8.50)
+        buyTime: currentMinute - (6 * oneMinute),     // 6 minutes ago (aligned to minute)
+        sellTime: currentMinute - (5 * oneMinute),    // 5 minutes ago (aligned to minute)
+      },
+      {
+        buyPrice: basePrice - 52, // Bought at $5042
+        sellPrice: basePrice - 1, // Sold at $5093 (profit ~$8.50)
+        buyTime: currentMinute - (4 * oneMinute),     // 4 minutes ago (aligned to minute)
+        sellTime: currentMinute - (3 * oneMinute),    // 3 minutes ago (aligned to minute)
+      },
+      {
+        buyPrice: basePrice - 50, // Bought at $5044
+        sellPrice: basePrice + 1, // Sold at $5095 (profit ~$8.50)
+        buyTime: currentMinute - (2 * oneMinute),     // 2 minutes ago (aligned to minute)
+        sellTime: currentMinute - (1 * oneMinute),    // 1 minute ago (aligned to minute)
+      },
+    ];
+
+    let totalProfit = 0;
+
+    // Execute historical trades
+    for (const trade of historicalTrades) {
+      // Buy trade
+      const buyCost = trade.buyPrice * historicalQty;
+      const buyFee = buyCost * this.TRADING_FEE;
+      const totalBuyCost = buyCost + buyFee;
+
+      const buyTrade: Trade = {
+        id: this.generateTradeId(trade.buyTime, 'BUY'),
+        type: 'BUY',
+        price: trade.buyPrice,
+        quantity: historicalQty,
+        timestamp: trade.buyTime,
+        fee: buyFee,
+      };
+
+      // Sell trade
+      const sellProceeds = trade.sellPrice * historicalQty;
+      const sellFee = sellProceeds * this.TRADING_FEE;
+      const netSellProceeds = sellProceeds - sellFee;
+      
+      // Calculate profit: net proceeds - cost basis (excluding fees in cost basis for cleaner calculation)
+      const tradePnL = netSellProceeds - buyCost;
+
+      const sellTrade: Trade = {
+        id: this.generateTradeId(trade.sellTime, 'SELL'),
+        type: 'SELL',
+        price: trade.sellPrice,
+        quantity: historicalQty,
+        timestamp: trade.sellTime,
+        fee: sellFee,
+      };
+
+      // Add trades to history
+      this.accountState.trades.push(buyTrade, sellTrade);
+      totalProfit += tradePnL;
+    }
+
+    // Add profit to balance and realized PnL
+    this.accountState.balance += totalProfit;
+    this.accountState.realizedPnL = totalProfit;
   }
 
   /**

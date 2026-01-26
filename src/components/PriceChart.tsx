@@ -105,14 +105,17 @@ export function PriceChart({ priceHistory, trades, currentPrice }: PriceChartPro
     if (!seriesRef.current || trades.length === 0) return;
 
     // Create markers from trades
-    const markers = trades.map((trade) => ({
-      time: (trade.timestamp / 1000) as any,
-      position: trade.type === 'BUY' ? ('belowBar' as const) : ('aboveBar' as const),
-      color: trade.type === 'BUY' ? '#26a69a' : '#ef5350',
-      shape: trade.type === 'BUY' ? ('arrowUp' as const) : ('arrowDown' as const),
-      text: `${trade.type} @ $${trade.price.toFixed(2)}`,
-      size: 1,
-    }));
+    // Convert timestamp to seconds (same format as candles) and sort by time
+    const markers = trades
+      .map((trade) => ({
+        time: Math.floor(trade.timestamp / 1000) as any, // Match candle timestamp format
+        position: trade.type === 'BUY' ? ('belowBar' as const) : ('aboveBar' as const),
+        color: trade.type === 'BUY' ? '#26a69a' : '#ef5350',
+        shape: trade.type === 'BUY' ? ('arrowUp' as const) : ('arrowDown' as const),
+        text: `${trade.type} @ $${trade.price.toFixed(2)}`,
+        size: 1,
+      }))
+      .sort((a, b) => a.time - b.time); // Sort by time to ensure proper display order
 
     // Set markers
     seriesRef.current.setMarkers(markers);

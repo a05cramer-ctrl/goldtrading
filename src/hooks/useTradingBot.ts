@@ -131,16 +131,18 @@ export function useTradingBot() {
     const initialIndicators = calculateIndicators(initialHistory);
     const initialPosition = executionSimulator.getPosition();
     const initialUnrealizedPnL = executionSimulator.getUnrealizedPnL(currentPrice);
+    const initialAccountState = executionSimulator.getAccountState();
+    const initialTrades = executionSimulator.getTradeHistory(); // Include historical trades
 
     setState({
       currentPrice,
       priceHistory: initialHistory,
       indicators: initialIndicators,
-      accountState: executionSimulator.getAccountState(),
+      accountState: initialAccountState,
       position: initialPosition,
       unrealizedPnL: initialUnrealizedPnL,
       latestDecision: null,
-      trades: [],
+      trades: initialTrades, // Include historical trades
       isLoading: false,
     });
 
@@ -190,6 +192,7 @@ export function useTradingBot() {
       }
 
       const newAccountState = executionSimulatorRef.current.getAccountState();
+      const allTrades = executionSimulatorRef.current.getTradeHistory(); // Get all trades including historical
       
       setState((prev) => ({
         ...prev,
@@ -197,7 +200,7 @@ export function useTradingBot() {
         position: executionSimulatorRef.current!.getPosition(),
         unrealizedPnL: executionSimulatorRef.current!.getUnrealizedPnL(currentPrice),
         latestDecision: decision,
-        trades: trade ? [...prev.trades, trade] : prev.trades,
+        trades: allTrades, // Use full trade history from simulator
       }));
     };
 

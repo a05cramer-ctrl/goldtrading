@@ -4,7 +4,24 @@
  * Main header with Claude branding and title.
  */
 
+import { useState } from 'react';
+
+const CONTRACT_ADDRESS = '28EMhehfNDMYYEoLb4K4sp3tBejsF8TvW8QiUosqpump';
+
 export function Header() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyCA = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    try {
+      await navigator.clipboard.writeText(CONTRACT_ADDRESS);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
   return (
     <header className="bg-slate-950 border-b border-claude-500/20 relative overflow-hidden">
       {/* Claude gradient overlay */}
@@ -69,17 +86,27 @@ export function Header() {
                 </svg>
               </a>
               
-              {/* CA Link - Contract Address */}
-              <a
-                href="https://solscan.io/token/28EMhehfNDMYYEoLb4K4sp3tBejsF8TvW8QiUosqpump"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-slate-400 hover:text-claude-400 transition-colors duration-200 text-sm font-medium"
-                aria-label="Contract Address"
-                title="28EMhehfNDMYYEoLb4K4sp3tBejsF8TvW8QiUosqpump"
-              >
-                CA
-              </a>
+              {/* CA Link - Contract Address with Copy */}
+              <div className="relative">
+                <a
+                  href="https://solscan.io/token/28EMhehfNDMYYEoLb4K4sp3tBejsF8TvW8QiUosqpump"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={handleCopyCA}
+                  className="text-slate-400 hover:text-claude-400 transition-colors duration-200 text-sm font-medium cursor-pointer"
+                  aria-label="Contract Address - Click to copy"
+                  title={`Click to copy: ${CONTRACT_ADDRESS}`}
+                >
+                  CA
+                </a>
+                
+                {/* Copy Feedback Toast */}
+                {copied && (
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 bg-claude-500 text-white text-xs rounded-lg shadow-lg whitespace-nowrap z-50 animate-fade-in">
+                    ✓ Copied!
+                  </div>
+                )}
+              </div>
             </div>
             
             {/* Market Info */}
