@@ -5,7 +5,7 @@
  * Replaces the simulated price engine with real market data.
  */
 
-import { fetchCurrentGoldPrice, fetchHistoricalGoldPrices, aggregateTo1MinuteCandles } from '../services/goldPriceApi';
+import { fetchCurrentGoldPrice, fetchHistoricalGoldPrices } from '../services/goldPriceApi';
 import { PriceData } from './priceEngine';
 
 export interface RealPriceEngineConfig {
