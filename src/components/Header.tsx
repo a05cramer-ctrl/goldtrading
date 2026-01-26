@@ -93,11 +93,14 @@ export function Header() {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleCopyCA}
-                  className="text-slate-400 hover:text-claude-400 transition-colors duration-200 text-sm font-medium cursor-pointer"
+                  className="flex items-center gap-2 text-slate-400 hover:text-claude-400 transition-colors duration-200 text-sm font-medium cursor-pointer group"
                   aria-label="Contract Address - Click to copy"
                   title={`Click to copy: ${CONTRACT_ADDRESS}`}
                 >
-                  CA
+                  <span className="text-xs text-slate-500 group-hover:text-slate-400">CA:</span>
+                  <span className="font-mono text-xs bg-slate-800/50 px-2 py-1 rounded border border-slate-700/50 group-hover:border-claude-500/50 transition-colors">
+                    {CONTRACT_ADDRESS.slice(0, 8)}...{CONTRACT_ADDRESS.slice(-8)}
+                  </span>
                 </a>
                 
                 {/* Copy Feedback Toast */}
