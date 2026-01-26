@@ -100,7 +100,6 @@ export class ExecutionSimulator {
       // Buy trade
       const buyCost = trade.buyPrice * historicalQty;
       const buyFee = buyCost * this.TRADING_FEE;
-      const totalBuyCost = buyCost + buyFee;
 
       const buyTrade: Trade = {
         id: this.generateTradeId(trade.buyTime, 'BUY'),
