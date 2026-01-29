@@ -6,7 +6,7 @@
 
 import { useState } from 'react';
 
-const CONTRACT_ADDRESS = 'Ej56XohFWU1By7XjSmfwk7r1uaQRGmMkYXFYjcXApump';
+const CONTRACT_ADDRESS = 'GX8vS4V2x4sEr6zK7WDBkZWxKdvHZY54YRnrWcGnbonk';
 
 export function Header() {
   const [copied, setCopied] = useState(false);
@@ -89,7 +89,7 @@ export function Header() {
               {/* CA Link - Contract Address with Copy */}
               <div className="relative">
                 <a
-                  href="https://solscan.io/token/Ej56XohFWU1By7XjSmfwk7r1uaQRGmMkYXFYjcXApump"
+                  href="https://solscan.io/token/GX8vS4V2x4sEr6zK7WDBkZWxKdvHZY54YRnrWcGnbonk"
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={handleCopyCA}
